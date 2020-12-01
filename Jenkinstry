@@ -5,7 +5,7 @@ pipeline {
  stages {
  stage ('Checkout') {
  steps {
- git branch:'master', url: 'https://github.com/OWASP/Vulnerable-WebApplication.git'
+ git branch:'main', url: 'https://github.com/number1garyfan/testing2.git'
  }
  }
 

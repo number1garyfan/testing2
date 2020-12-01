@@ -1,0 +1,27 @@
+{
+agent {
+docker { image 'maven' }
+}
+stages {
+stage ('Checkout') {
+steps {
+git branch:'master', url: 'https://github.com/OWASP/Vulnerable-Web-Application.git'
+}
+}
+stage('Code Quality Check via SonarQube') {
+steps {
+script {
+def scannerHome = tool 'SonarQube';
+withSonarQubeEnv() {
+sh "${tool("SonarQube")}/bin/sonar-scanner \-Dsonar.projectKey=OWSAP \-Dsonar.sources=. \-Dsonar.host.url=http://192.168.1.74:9000 \-Dsonar.login=5b465ad523d097c430354d20d559277426e4ca76"
+}
+}
+}
+}
+}
+post {
+always {
+recordIssues enabledForFailure: true, tool: sonarQube()
+}
+}
+}

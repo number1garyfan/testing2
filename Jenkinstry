@@ -1,28 +1,31 @@
-pipeline
-{
-agent {
-docker { image 'maven' }
-}
-stages {
-stage ('Checkout') {
-steps {
-git branch:'main', url: 'https://github.com/number1garyfan/testing2.git'
-}
-}
-stage('Code Quality Check via SonarQube') {
-steps {
-script {
-def scannerHome = tool 'SonarQube';
-withSonarQubeEnv() {
-sh "${tool("SonarQube")}/bin/sonar-scanner -Dsonar.projectKey=OWSAP -Dsonar.sources=. -Dsonar.host.url=http://192.168.137.132:9000 -Dsonar.login=15f8d7ac4263f3171b003c8f5115b77371659933"
-}
-}
-}
-}
-}
-post {
-always {
-recordIssues enabledForFailure: true, tool: sonarQube()
-}
-}
-}
+pipeline {
+ agent {
+ docker { image 'maven' }
+ }
+ stages {
+ stage ('Checkout') {
+ steps {
+ git branch:'master', url: 'https://github.com/OWASP/Vulnerable-WebApplication.git'
+ }
+ }
+
+ stage('Code Quality Check via SonarQube') {
+ steps {
+ script {
+ def scannerHome = tool 'SonarQube';
+ withSonarQubeEnv() {
+ sh "${tool("SonarQube")}/bin/sonar-scanner \
+ -Dsonar.projectKey=OWSAP \
+ -Dsonar.sources=. \
+ -Dsonar.host.url=http://192.168.137.132:9000/ \
+ -Dsonar.login=15f8d7ac4263f3171b003c8f5115b77371659933"
+ }
+ }
+ }
+ }
+ }
+ post {
+ always {
+ recordIssues enabledForFailure: true, tool: sonarQube()
+ }
+ }
